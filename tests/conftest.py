@@ -76,6 +76,17 @@ def create_random_user_dict():
         "email":faker.unique.email(),
         "password":faker.password()
     }
+    
+    
+@pytest.fixture
+def create_random_task_dict():
+    faker = Faker()
+    return {
+        "task":faker.name(),
+        "task_description":faker.text(),
+        "task_conclusion":faker.boolean(),
+        "user": User()
+    }
 
 @pytest.fixture
 def create_user_repository():

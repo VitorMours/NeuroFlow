@@ -42,3 +42,13 @@ Temos que as tecnologias usadas dentro desse projeto e suas definições de uso 
 - **HTML:** Estruturação das Páginas
 - **CSS:** Estilização de páginas
 - **Javascript:** Dinâmicidade e Interatividade do Usuário
+
+
+# Melhorias
+
+COmo possíveis melhorias que podemos ter dentro da ferramenta, é adicionar features que facilitem o desenvolvimento de tasks, e ajudem 
+o usuário a facilitar a forma como o mesmo trabalha e consegue desenvolver suas tasks dentro de um sistema de desenvolvimento e soluçã
+de problemas. Isso permite maior agilidade e facilidade dentro das necessidades do cliente, algumas ferramentas ue podem ser adicionadas
+no futuro desenvolvimento da nossa ferramenta, são as seguintes e suas funções dentro de um sistema de produtivilidade:
+
+- [ ] Matriz de Eisenhower

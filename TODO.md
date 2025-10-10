@@ -60,5 +60,13 @@ que eu trocar de aba, ou criar uma nova task tenho, salvar as modificacoes que f
 
 # 18/08/2025
 - [ ] Adicionar docker dentro da estrutura de forma que facilite o desenvolvimento em diferentes ambientes 
-- [ ] 
-- [ ] 
+
+
+# 08/09/2025 
+- [x] Fazer a landing page sem a parte de contanto
+- [x] Fazer o rodape com o link de email e o link do linkedin
+- [ ] Criar o sistema de temas com javascript dentro do projeto
+- [ ] Fazer o sistema de anoteções e de tasks dentro do projeto 
+
+# 29/09/2025
+- [ ] Corrigir o sistema responsável por fazer o todo dentro do flask

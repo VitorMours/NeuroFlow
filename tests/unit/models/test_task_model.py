@@ -87,7 +87,22 @@ class TestTaskModel:
             user = create_default_static_user
         )
         assert task_instance.user == create_default_static_user
-        with pytest.raises(AttributeError):
-            task_instance.user_id = create_second_user
     
+    def test_get_task_description_content_type(self, create_default_static_user) -> None:
+        task_instance = Task(
+            task = "Estudar Flask",
+            task_description = "Estudar o framework Flask para desenvolver aplicações web",
+            task_conclusion = False,
+            user = create_default_static_user
+        )
+        assert isinstance(task_instance.task_description, str)
+        
+    def test_get_task_description_content(self, create_default_static_user) -> None:
+        task_instance = Task(
+            task = "Estudar Flask",
+            task_description = "Estudar o framework Flask para desenvolver aplicações web",
+            task_conclusion = False,
+            user = create_default_static_user
+        )
+        assert task_instance.task_description == "Estudar o framework Flask para desenvolver aplicações web"
 

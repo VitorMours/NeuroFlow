@@ -3,16 +3,24 @@ from .user_service import UserService
 from ..repositories.user_repository import UserRepository
 from src.models.user_model import User
 from src.utils import security
-from src.utils.erros import (UserAlreadyExistsError,
-                             UserDoesNotExistsError,
-                             IncorrectCredentialsToLoginError)
+from src.utils.erros import (
+    UserAlreadyExistsError,
+    UserDoesNotExistsError,
+    IncorrectCredentialsToLoginError,
+)
 
 from flask import session, redirect, url_for, flash
+
 
 class AuthService(AuthServiceInterface):
 
     @staticmethod
     def check_session() -> bool:
+
+        if session.get("login") is None:
+            return False
+        elif session.get("email") is None:
+            return False
         return True
 
     @staticmethod
@@ -27,14 +35,22 @@ class AuthService(AuthServiceInterface):
         return True
 
     @staticmethod
-    def login_user(user_data: dict) -> None:
-        AuthService.authenticate_user(user_data)
+    def login_user(user_data: dict) -> bool:
+        user_email = user_data["email"]
+        user = UserRepository.get_by_email(user_email)
+
+        if user is None:
+            return False
+
+        AuthService.create_session(user)
         return True
 
     @staticmethod
-    def logout_user() -> None:
-        return True
-
+    def logout_user() -> bool:
+        if AuthService.check_session():
+            AuthService.destroy_session()
+            return True
+        return False
 
     @staticmethod
     def authenticate_user(user_data: dict) -> bool:
@@ -42,9 +58,13 @@ class AuthService(AuthServiceInterface):
         if UserRepository.get_by_email(user_email) is not None:
             return True
 
-    @staticmethod 
-    def check_password(password: str, confirmation:str) -> bool | IncorrectCredentialsToLoginError:
+    @staticmethod
+    def check_password(
+        password: str, confirmation: str
+    ) -> bool | IncorrectCredentialsToLoginError:
         if password == confirmation:
             return True
         else:
-            raise IncorrectCredentialsToLoginError("A senha e a contrasenha possuem valores diferentes")
+            raise IncorrectCredentialsToLoginError(
+                "A senha e a contrasenha possuem valores diferentes"
+            )
