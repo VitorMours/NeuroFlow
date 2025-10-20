@@ -6,6 +6,7 @@
  * @property {string} task_description - Descrição detalhada da task
  * @property {string} user_id - ID do usuário responsável pela task
  */
+import TaskService from "./taskService";
 
 const allTasksList = document.getElementById("todo-all-list");
 const activeTasksList = document.getElementById("todo-active-list");

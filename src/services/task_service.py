@@ -49,7 +49,7 @@ class TaskService(TaskServiceInterface):
                     "task_description": data.get("task_description"),
                     "task_conclusion": data.get("task_conclusion")
                 },
-                user_id=user.id  # ← Apenas o ID, não o objeto User
+                user_id=user.id  # O objeto User
             )
         else:
             created_task = TaskRepository.create(
@@ -58,7 +58,7 @@ class TaskService(TaskServiceInterface):
                     "task_description": data.get("task_description"),
                     "task_conclusion": data.get("task_conclusion")
                 },
-                user_id=user_id  # ← Apenas o ID, não o objeto User
+                user_id=user_id  # Apenas o ID, não o objeto User
             )
             
         return created_task
@@ -68,8 +68,26 @@ class TaskService(TaskServiceInterface):
         pass
 
     @staticmethod
-    def update() -> None:
-        pass
+    def update(task_id: int, update_data: dict) -> None:
+        try:
+            if not task_id or not isinstance(task_id, str):
+                raise ValueError("Invalid task ID")
+            
+            if not update_data or not isinstance(update_data, dict):
+                raise ValueError("Invalid update data")
+            
+            filtered_data = {k: v for k, v in update_data.items() if v is not None}
+            
+            if not filtered_data:
+                return False
+            
+            success = TaskRepository.update(task_id, filtered_data)
+            
+            return success
+            
+        except Exception as e:
+            print(f"Error in TaskService.update: {str(e)}")
+            return False
 
     @staticmethod
     def toggle_status() -> None:

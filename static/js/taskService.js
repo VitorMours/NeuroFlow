@@ -1,4 +1,4 @@
-class TaskService {
+export default class TaskService {
     static api = "http://localhost:5000";
     static config = {
         headers: {
@@ -13,13 +13,15 @@ class TaskService {
      * @param {boolean} newStatus - Novo status de conclusão
      */
     static async updateTaskStatus(taskId, newStatus) {
+        
         try {
-            const response = await fetch(`${this.api}/todo/${taskId}`, {
+            const response = await fetch(`${this.api}/todo`, {
                 method: "PUT",
                 headers: this.config.headers,
                 credentials: this.config.credentials,
                 body: JSON.stringify({
-                    task_conclusion: newStatus
+                    task_conclusion: newStatus,
+                    task_id: taskId
                 })
             });
             
@@ -28,11 +30,9 @@ class TaskService {
             }
             
             const result = await response.json();
-            console.log("Task atualizada:", result);
             return result;
             
         } catch (error) {
-            console.error("Erro ao atualizar task:", error);
             throw error; // Propaga o erro para o caller
         }
     }

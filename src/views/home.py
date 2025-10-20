@@ -1,3 +1,4 @@
+from typing import Tuple, Union
 from flask import Blueprint, redirect, render_template, flash, request, session, url_for, jsonify
 from flask.views import MethodView, View
 from ..services.task_service import TaskService
@@ -53,16 +54,32 @@ class TodoView(MethodView):
             flash("Invalid form data. Please check your input.", "warning")
         return redirect(url_for("views.home.todo"))
 
-
-
-class TodoDetailView(MethodView):
-    decorators = [login_required]
-
-    def put(self, task_uuid) -> str:
-        pass
+    def put(self) -> Union[bool, Tuple[str, int]]:
+        try:
+            data = request.get_json()
+            
+            if not data:
+                return jsonify({"error": "No data provided"}), 400
+            
+            if "task_id" not in data:
+                return jsonify({"error": "Task ID is required"}), 400
+            
+            task_id = data.get("task_id")
+            update_data = {k: v for k, v in data.items() if k != "task_id"}
+            
+            success = TaskService.update(task_id, update_data)
+            
+            # CORREÇÃO: Retornar uma resposta válida em vez de None
+            if success:
+                return jsonify({"message": "Task updated successfully"}), 200
+            else:
+                return jsonify({"error": "Task not found or update failed"}), 404
+                
+        except Exception as e:
+            print(f"Error in PUT method: {str(e)}")
+            return jsonify({"error": "Internal server error"}), 500
 
 
 bp.add_url_rule("/home", view_func=HomeView.as_view("home"))
 bp.add_url_rule("/notes", view_func=NotesView.as_view("notes"))
 bp.add_url_rule("/todo", view_func=TodoView.as_view("todo"))
-bp.add_url_rule("/todo/<uuid:uuid>", view_func=TodoDetailView.as_view("todo-detail"))

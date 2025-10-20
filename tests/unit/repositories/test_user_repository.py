@@ -30,7 +30,7 @@ class TestUserRepository:
     def test_if_repository_have_only_the_correct_methods(self, create_user_repository) -> None:
         required_methods = [
             "create", "update", "delete",
-            "get_all", "get_by_email",
+            "get_all", "get_by_email", "get_by_uuid"
         ]
         for method_name in dir(create_user_repository):
             if method_name.startswith("__"):
