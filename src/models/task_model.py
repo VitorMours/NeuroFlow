@@ -1,4 +1,4 @@
-from sqlalchemy import String, Boolean, ForeignKey, UUID
+from sqlalchemy import DateTime, String, Boolean, ForeignKey, UUID, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from . import db
 import uuid
@@ -13,6 +13,7 @@ class Task(db.Model):
     task_conclusion: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     user_id: Mapped[str] = mapped_column(ForeignKey("user.id", name="fk_task_user_id"), nullable=False)
     user: Mapped["User"] = relationship(back_populates="tasks") # type:ignore
+    created_at: Mapped[DateTime] = mapped_column(DateTime, nullable=False, server_default=func.now())
     
 
     def toggle_conclusion(self) -> None:

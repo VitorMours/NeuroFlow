@@ -1,9 +1,11 @@
 from typing import Tuple, Union
 from flask import Blueprint, redirect, render_template, flash, request, session, url_for, jsonify
 from flask.views import MethodView, View
+
+from services.note_service import NoteService
 from ..services.task_service import TaskService
 from src.utils.security import login_required, sanitize_request
-from src.forms import TaskForm 
+from src.forms import TaskForm, NoteForm
 import json
 
 bp = Blueprint("home", __name__)
@@ -18,12 +20,29 @@ class NotesView(MethodView):
     decorators = [login_required]
 
     def get(self) -> str:
-        return render_template("notes.html", active_page="notes")
+        form = NoteForm()
+        return render_template("notes.html", active_page="notes", form=form)
+
+    def post(self) -> str:
+        form = NoteForm() 
+        
+        if form.validate_on_submit():
+            data = form.data 
+            print(data)
+            NoteService.create_note(
+                title=data["title"],
+                content=data["content"]
+            )
+            
+            return render_template("notes.html", active_page="notes", form=form)
+            
+
 
 class NoteTakerView(MethodView):
     decorators = [login_required]
 
     def get(self, note_uuid: int) -> str:
+        # notes = NotesService
         # TODO: Fazer esse método para retornar um template da nota, especificado com base na rota
         # note = Note
         # return render_template("note_taker.html", note_uuid = note_uuid active_page="notes")
