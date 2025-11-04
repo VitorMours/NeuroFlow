@@ -29,7 +29,7 @@ class TestNoteModel:
         assert hasattr(class_, "link")
         assert hasattr(class_, "content")
         assert hasattr(class_, "created_at")
-        assert hasattr(class_, "owner_id")
+        assert hasattr(class_, "user_id")
         
     def test_get_note_title_data(self) -> None:
         module = importlib.import_module("src.models.note_model")

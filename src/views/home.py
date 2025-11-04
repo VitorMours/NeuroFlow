@@ -2,8 +2,8 @@ from typing import Tuple, Union
 from flask import Blueprint, redirect, render_template, flash, request, session, url_for, jsonify
 from flask.views import MethodView, View
 
-from services.note_service import NoteService
-from ..services.task_service import TaskService
+from src.services.note_service import NoteService
+from src.services.task_service import TaskService
 from src.utils.security import login_required, sanitize_request
 from src.forms import TaskForm, NoteForm
 import json
@@ -21,6 +21,8 @@ class NotesView(MethodView):
 
     def get(self) -> str:
         form = NoteForm()
+        
+        
         return render_template("notes.html", active_page="notes", form=form)
 
     def post(self) -> str:
@@ -28,8 +30,7 @@ class NotesView(MethodView):
         
         if form.validate_on_submit():
             data = form.data 
-            print(data)
-            NoteService.create_note(
+            NoteService.create(
                 title=data["title"],
                 content=data["content"]
             )
