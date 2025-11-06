@@ -2,11 +2,12 @@ from ..models.note_model import Note
 from ..models.user_model import User
 from ..models import db
 from typing import List, Optional 
+import uuid
 
 class NoteRepository:
     
     @staticmethod 
-    def create(note_data: dict[str, str], user: User) -> Note: 
+    def create(note_data: dict[str, str], user: User) -> Note:
         """ 
         metodo designado para criar a nota de um usuario dentro do
         banco de dados, e ter seu id como chave estrangeira de procura
@@ -27,11 +28,22 @@ class NoteRepository:
         
         
     @staticmethod 
-    def update() -> None:
-        pass 
+    def update(old_data: Note, new_data: dict[str, str | bool]) -> None:
+        fields = [field for field in dir(Note) if not field.startswith("_")]
+        try:
+            for key, value in new_data.items():
+                if key not in fields:
+                    raise KeyError("This type of value does not can be assigned")
+                setattr(old_data, key, value)
+
+            db.session.commit()
+            return True
+
+        except Exception as e:
+            return e
     
     @staticmethod 
-    def get_by_uuid() -> None: 
+    def get_by_uuid(uuid: uuid.uuid4) -> None:
         pass
     
     @staticmethod
