@@ -17,10 +17,7 @@ class AuthService(AuthServiceInterface):
 
     @staticmethod
     def check_session() -> bool:
-
-        if session["login"]:
-            return True
-        return False
+        return session.get("login", False)
 
     @staticmethod
     def create_session(user: User) -> None:
@@ -47,7 +44,6 @@ class AuthService(AuthServiceInterface):
         if not check_password(user_password, user.password):
             return False
 
-
         AuthService.create_session(user)
         return True
 
@@ -59,9 +55,10 @@ class AuthService(AuthServiceInterface):
         return False
 
     @staticmethod
-    def authenticate_user(user_data: dict) -> bool:
+    def authenticate_user(user_data: dict) -> bool | User:
         user_email = user_data["email"]
-        if user := UserRepository.get_by_email(user_email) is not None:
+        user = UserRepository.get_by_email(user_email)
+        if user is not None:
             return user
         return False
 

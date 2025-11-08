@@ -79,8 +79,9 @@
                         <p class="card-text">{{ note.content[:100] }}{% if note.content|length > 100 %}...{% endif %}</p>
                         <small class="text-muted">Created: {{ note.created_at.strftime('%Y-%m-%d') }}</small>
                         <div class="mt-2">
-                            <a href="{{ url_for('notes.view_note', note_id=note.id) }}" class="btn btn-sm btn-outline-primary">View</a>
-                            <a href="{{ url_for('notes.edit_note', note_id=note.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            {# Uncomment these when you implement the view and edit routes #}
+                            {# <a href="{{ url_for('notes.view_note', note_id=note.id) }}" class="btn btn-sm btn-outline-primary">View</a> #}
+                            {# <a href="{{ url_for('notes.edit_note', note_id=note.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a> #}
                         </div>
                     </div>
                 </div>

@@ -65,7 +65,10 @@ class TestAuthService:
                 user = UserService.create_user(create_random_user_dict)
                 module = importlib.import_module("src.services.auth_service")
                 AuthService.login_user(create_random_user_dict)
-                assert module.AuthService.logout_user()
+                module.AuthService.logout_user()
+
+                assert AuthService.check_session() is False
+
 
     def test_service_logout_user_method_implementation_without_login(self, app, create_random_user_dict) -> None:
         with app.app_context():

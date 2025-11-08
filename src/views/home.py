@@ -22,21 +22,21 @@ class NotesView(MethodView):
     def get(self) -> str:
         form = NoteForm()
         
-        
-        return render_template("notes.html", active_page="notes", form=form)
+        user_email = session.get("email")
+        notes = NoteService.get_user_notes(user_email=user_email)
+        print(notes)
+        return render_template("notes.html", active_page="notes", form=form, notes=notes)# , notes=notes
 
     def post(self) -> str:
+        
         form = NoteForm() 
         
         if form.validate_on_submit():
+        
             data = form.data 
-            NoteService.create(
-                title=data["title"],
-                content=data["content"]
-            )
+            NoteService.create_note(data)
             
-            return render_template("notes.html", active_page="notes", form=form)
-            
+            return redirect(url_for("views.home.notes"))            
 
 
 class NoteTakerView(MethodView):
