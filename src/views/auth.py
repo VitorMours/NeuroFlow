@@ -48,7 +48,6 @@ class SigninView(MethodView):
         
         if password_confirmation:
             if user_created := UserService.create_user(data):
-                print(user_created)
                 AuthService.create_session(user_created) #type: ignore
 
                 return redirect(url_for("views.home.home")) #type: ignore

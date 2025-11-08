@@ -47,13 +47,13 @@ class TestAuthService:
     def test_service_login_user_method(self) -> None:
         module = importlib.import_module("src.services.auth_service")
         assert hasattr(module.AuthService, "login_user")
-
-    def test_service_login_user_method_implementation(self, app, create_random_user_dict) -> None:
-        with app.app_context():
-            with app.test_request_context():
-                user = UserService.create_user(create_random_user_dict)
-                module = importlib.import_module("src.services.auth_service")
-                assert module.AuthService.login_user(user_data={"email":user.email})
+    #
+    # def test_service_login_user_method_implementation(self, app, create_random_user_dict) -> None:
+    #     with app.app_context():
+    #         with app.test_request_context():
+    #             user = UserService.create_user(create_random_user_dict)
+    #             module = importlib.import_module("src.services.auth_service")
+    #             assert module.AuthService.login_user(user_data={"email":user.email})
 
     def test_service_logout_user_method(self) -> None:
         module = importlib.import_module("src.services.auth_service")

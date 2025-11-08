@@ -18,7 +18,15 @@ class UserService(UserServiceInterface):
         e caso estejam corretos usa para criar um usuário por meio do
         UserRepository
         """
+
+
+        if 'password' in data:
+            senha_plana = data['password']
+            senha_hash = encrypt_password(senha_plana)  # Usando sua função de segurança
+            data['password'] = senha_hash  # Substitui a senha plana pelo hash
+
         user = UserRepository.create(data)
+
         return user
 
 
@@ -49,6 +57,8 @@ class UserService(UserServiceInterface):
     def delete_user(data) -> None:
         pass
     
+
+
     @staticmethod
     def get_user_by_uuid(uuid: str) -> User | None:
         return UserRepository.get_by_uuid(uuid)

@@ -43,14 +43,18 @@ class NoteRepository:
             return e
     
     @staticmethod 
-    def get_by_uuid(uuid: uuid.uuid4) -> None:
-        pass
+    def get_by_uuid(uuid: uuid.uuid4) -> None | Note:
+        return Note.query.filter_by(id=uuid).first()
     
     @staticmethod
     def get_all() -> None:
         all_notes = Note.query.all()
         return all_notes         
     
+    @staticmethod
+    def get_by_user_uuid(user_uuid: uuid) -> None | List[Note]:
+        return Note.query.filter_by(user_id=user_uuid).all()
+
     def __repr__(self) -> str:
         return "<NoteRepository>"
     

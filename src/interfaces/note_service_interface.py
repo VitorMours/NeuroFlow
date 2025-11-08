@@ -1,24 +1,24 @@
 from abc import ABC, abstractmethod
 
 class NoteServiceInterface(ABC):
-    
-    @abstractmethod
+
     @staticmethod
+    @abstractmethod
     def create_note() -> None:
         pass
     
     
-    @abstractmethod
     @staticmethod
+    @abstractmethod
     def update_note() -> None:
         pass 
     
+    @staticmethod
     @abstractmethod
-    @staticmethod 
     def get_user_notes() -> None:
         pass
     
-    @abstractmethod 
-    @staticmethod 
+    @staticmethod
+    @abstractmethod
     def delete_user_note() -> None:
         pass

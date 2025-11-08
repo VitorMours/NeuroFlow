@@ -123,9 +123,6 @@ class TestNoteRepository:
         for field in needed_fields:
             assert field in signature.parameters.keys()
 
-
-
-    # TODO: IMplementar a bucas
     def test_if_can_get_a_note_by_uuid(self, app, create_random_user_dict, create_random_note_dict) -> None:
         with app.app_context():
             module = importlib.import_module("src.repositories.note_repository")
@@ -136,6 +133,30 @@ class TestNoteRepository:
             assert isinstance(new_note, Note)
             result = NoteRepository.get_by_uuid(new_note_uuid)
 
-            assert len(result) > 0
+            assert isinstance(result, Note)
 
+    def test_if_can_get_user_notes_by_user_uuid_method_exists(self) -> None:
+        module = importlib.import_module("src.repositories.note_repository")
+        class_ = module.NoteRepository
+        assert hasattr(class_, "get_by_user_uuid")
 
+    def test_if_can_get_user_notes_by_user_uuid(self, app, create_random_user_dict, create_random_note_dict) -> None:
+        with app.app_context():
+            new_user = UserRepository.create(create_random_user_dict)
+            assert isinstance(new_user, User)
+
+            NoteRepository.create(create_random_note_dict, new_user)
+            NoteRepository.create(create_random_note_dict, new_user)
+            NoteRepository.create(create_random_note_dict, new_user)
+
+            notes_count = NoteRepository.get_all()
+
+            assert len(notes_count) == 3
+            for note in notes_count:
+                assert isinstance(note, Note)
+
+            notes = NoteRepository.get_by_user_uuid(new_user.id)
+
+            for note in notes:
+                assert isinstance(note, Note)
+                assert note.user_id == new_user.id

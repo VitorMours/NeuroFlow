@@ -1,5 +1,6 @@
 from ..interfaces.auth_service_interface import AuthServiceInterface
 from .user_service import UserService
+from src.utils.security import check_password, encrypt_password
 from ..repositories.user_repository import UserRepository
 from src.models.user_model import User
 from src.utils import security
@@ -16,11 +17,13 @@ class AuthService(AuthServiceInterface):
 
     @staticmethod
     def check_session() -> bool:
-        return True
+
+        if session["login"]:
+            return True
+        return False
 
     @staticmethod
     def create_session(user: User) -> None:
-        print(f"user: {user}")
         session["email"] = user.email
         session["username"] = f"{user.first_name} {user.last_name}"
         session["login"] = True
@@ -37,10 +40,13 @@ class AuthService(AuthServiceInterface):
     @staticmethod
     def login_user(user_data: dict) -> bool:
         user_email = user_data["email"]
+        user_password = user_data["password"]
         user = UserRepository.get_by_email(user_email)
-        # TODO: Need to fix
         if user is None:
             return False   
+        if not check_password(user_password, user.password):
+            return False
+
 
         AuthService.create_session(user)
         return True
@@ -55,13 +61,12 @@ class AuthService(AuthServiceInterface):
     @staticmethod
     def authenticate_user(user_data: dict) -> bool:
         user_email = user_data["email"]
-        if UserRepository.get_by_email(user_email) is not None:
-            return True
+        if user := UserRepository.get_by_email(user_email) is not None:
+            return user
+        return False
 
     @staticmethod
-    def check_password(
-        password: str, confirmation: str
-    ) -> bool | IncorrectCredentialsToLoginError:
+    def check_password(password: str, confirmation: str) -> bool | IncorrectCredentialsToLoginError:
         if password == confirmation:
             return True
         else:

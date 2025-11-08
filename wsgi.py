@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from dotenv import load_dotenv
 from pathlib import Path
-
+import os
 from flask_admin import Admin
 from src.models import db
 from flask_migrate import Migrate
@@ -44,5 +44,7 @@ def create_app(config_name: str) -> Flask:
     return app
 
 if __name__ == "__main__":
-    app = create_app("development")
-    app.run()
+    config_name = os.getenv('FLASK_ENV', 'development')
+    app = create_app(config_name)
+
+    app.run(host='0.0.0.0', port=5000)
