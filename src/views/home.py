@@ -5,7 +5,7 @@ from flask.views import MethodView, View
 from src.services.note_service import NoteService
 from src.services.task_service import TaskService
 from src.utils.security import login_required, sanitize_request
-from src.forms import TaskForm, NoteForm
+from src.forms import TaskForm, NoteForm, NoteEditForm
 import json
 
 bp = Blueprint("home", __name__)
@@ -37,17 +37,18 @@ class NotesView(MethodView):
             NoteService.create_note(data)
             
             return redirect(url_for("views.home.notes"))            
-
-
+        
 class NoteTakerView(MethodView):
     decorators = [login_required]
 
-    def get(self, note_uuid: int) -> str:
-        # notes = NotesService
-        # TODO: Fazer esse método para retornar um template da nota, especificado com base na rota
-        # note = Note
-        # return render_template("note_taker.html", note_uuid = note_uuid active_page="notes")
-        pass
+    def get(self, note_uuid: str) -> str:
+        form = NoteEditForm()
+        return render_template(
+            "note_taker.html", 
+            active_page="notes", 
+            note_uuid=note_uuid,
+            form=form
+        )
 
 class TodoView(MethodView):
     decorators = [login_required]
@@ -102,4 +103,5 @@ class TodoView(MethodView):
 
 bp.add_url_rule("/home", view_func=HomeView.as_view("home"))
 bp.add_url_rule("/notes", view_func=NotesView.as_view("notes"))
+bp.add_url_rule("/notes/<note_uuid>", view_func=NoteTakerView.as_view("note_taker"))
 bp.add_url_rule("/todo", view_func=TodoView.as_view("todo"))

@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 import os
 from flask_admin import Admin
+from flask_pagedown import PageDown
 from src.models import db
 from flask_migrate import Migrate
 from src.models.user_model import User
@@ -19,6 +20,15 @@ load_dotenv(dotenv_path = dotenv_file)
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__, template_folder="src/templates/pages")
     app.config.from_object(config[config_name])
+
+    pagedown = PageDown()
+    pagedown.init_app(app)
+
+
+    @app.context_processor
+    def inject_pagedown():
+        return dict(pagedown=pagedown)
+
 
     def render_http_error(error):
         code = getattr(error, 'code', 500)
@@ -37,7 +47,6 @@ def create_app(config_name: str) -> Flask:
     admin = Admin()
     admin_add_views(admin, [User, Task, Note])
     admin.init_app(app)
-
     app.register_blueprint(bp)
     app.register_blueprint(api_bp)
 

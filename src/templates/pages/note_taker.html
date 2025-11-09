@@ -1,0 +1,20 @@
+{% extends "base.jinja" %}
+
+{% block head %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+{% endblock %}
+
+{% block subtitle %}- Note {{ note_uuid }}{% endblock %}
+
+{% block sidebar %}
+    {% include "sidebar.html" %}
+    <div class="vr"></div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}
+
+{% block scripts %}
+
+{% endblock %}
