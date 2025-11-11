@@ -3,6 +3,7 @@ from src.models import db
 from typing import List
 from src.utils.security import email_validator
 from src.utils.erros import UserDoesNotExistsError, IncorrectUserDataError, UserAlreadyExistsError
+import uuid
 
 class UserRepository:
     @staticmethod
@@ -15,13 +16,15 @@ class UserRepository:
             Return True if the user was successfully created else IncorrectUserDataErrors
         """
         try:
+            print(data)
             user = User(**data)
             db.session.add(user)
             db.session.commit()
+            
             return user
-        except Exception:
+        except Exception as e:
             db.session.rollback()
-            return IncorrectUserDataError("Invalid user data")
+            return IncorrectUserDataError(f"Invalid user data")
 
     @staticmethod
     def get_all() -> List[User] | User:
@@ -31,7 +34,18 @@ class UserRepository:
     @staticmethod
     def get_by_email(email: str) -> list[str]:
         return  User.query.filter_by(email=email).first()
-        
+            
+    @staticmethod
+    def get_by_uuid(uuid_str: str) -> User | None:
+        """
+        Busca um usuário pelo UUID.
+        Usa sempre string para compatibilidade com SQLAlchemy.
+        """
+        if not uuid_str:
+            return None
+
+        return User.query.filter_by(id=uuid_str).first()
+ 
     @staticmethod
     def update(user: User, data: dict[str, str | int]) -> User:
         for key in data.keys():

@@ -27,7 +27,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(256), nullable=False)
     tasks: Mapped[List["Task"]] = relationship(back_populates="user") # type:ignore
-    notes: Mapped[List["Note"]] = relationship(back_populates="owner") # type:ignore
+    notes: Mapped[List["Note"]] = relationship(back_populates="user") # type:ignore
     
     @property
     def full_name(self) -> str:
