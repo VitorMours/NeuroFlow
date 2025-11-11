@@ -1,10 +1,10 @@
-# VTasks API
+# neuroflows API
 
 Essa Api tem como intuito, ser um meio de comunicação entre possíveis desenvolvedores que desejem modificar
 a interface do app, criando novas customizações, ou pessoas que desejam criar novas visualizações com os seus dados, 
 de forma que possa ser mais agradável a cada gosto.
 
-O Vtasks é construido tendo em vista que a aplicação central não é servida de uma Api, mas sim por meio de um servidor web
+O neuroflows é construido tendo em vista que a aplicação central não é servida de uma Api, mas sim por meio de um servidor web
 que é responsável por gerar as páginas dinâmicas do site, que é o Flask. Com isso, essa Api é desenvolvida lado a lado desse 
 servidor, com o intuito de promover um acesso mais estruturado e facilitado desses dados, de forma que eles consigam ser vistos por qualquer um e serem consumidos por qualquer código.
 

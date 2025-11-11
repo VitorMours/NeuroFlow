@@ -38,11 +38,34 @@
 }
 
 
-        #founder-image {
-            width: 250px;
-            height: 450px; /* Altura adicionada para a div não colapsar */
-            background-image: url("../img/founder.webp"); 
-            background-size: cover; /* Garante que a imagem cubra toda a área */
-            background-position: 100% 0%; /* Centraliza a imagem no elemento */
-            background-repeat: no-repeat;
-        }
+#founder-image {
+    width: 250px;
+    height: 450px; /* Altura adicionada para a div não colapsar */
+    background-image: url("../img/founder.webp"); 
+    background-size: cover; /* Garante que a imagem cubra toda a área */
+    background-position: 100% 0%; /* Centraliza a imagem no elemento */
+    background-repeat: no-repeat;
+}
+
+.flashes,
+.flashes > li {
+    list-style-type: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flashes > li {
+    margin-bottom: 0.5rem;
+}
+
+.transition-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.transition-card:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

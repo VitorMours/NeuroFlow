@@ -1,5 +1,5 @@
 {
-  "name": "vtasks",
+  "name": "neuroflows",
   "version": "1.0.0",
   "description": "O Vtkasks foi um projeto desenvolvido com o intuito de estudar melhor a manipulação de dados que pode ser feita \r com o uso de frameworks como **numpy**, **pandas** e **scikit-learn**, e como eles podem ser usados para criar dashboard, visualizações,\r e feedbacks interativos com o usuário, de forma a ajudar o mesmo a ter uma melhor métrica do seu desempenho pessoal, por meio de análise de dados.",
   "main": "index.js",
@@ -13,22 +13,24 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/VitorMours/VTasks.git"
+    "url": "git+https://github.com/VitorMours/neuroflows.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/VitorMours/VTasks/issues"
+    "url": "https://github.com/VitorMours/neuroflows/issues"
   },
-  "homepage": "https://github.com/VitorMours/VTasks#readme",
+  "homepage": "https://github.com/VitorMours/neuroflows#readme",
   "dependencies": {
     "@babel/preset-env": "^7.28.0",
     "axios": "^1.11.0",
     "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
+    "marked": "^17.0.0",
+    "simplemde": "^1.11.2",
     "style-loader": "^4.0.0",
-    "webpack": "^5.101.0",
+    "webpack": "^5.102.1",
     "webpack-cli": "^6.0.1"
   }
 }

@@ -24,10 +24,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="{{ url_for('static', filename='dist/bundle.js') }}"></script>
     {% block css %}{% endblock %}
 
-    <title>VTask {% block subtitle %}{% endblock %}</title>
+    <title>neuroflow {% block subtitle %}{% endblock %}</title>
 
 </head>
 <body data-delete-icon="{{ url_for('static', filename='svg/delete.svg') }}">
@@ -44,6 +43,7 @@
         
         {% endblock %}
 </body>
+{% block javascript_pre_bundle %}{% endblock %}
 <script src="{{ url_for('static', filename='dist/bundle.js') }}"></script>
 </html>
 

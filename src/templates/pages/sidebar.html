@@ -1,5 +1,5 @@
 <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary p-3 min-vh-100" style="width: 280px;">
-  <h3>VTasks</h3>
+  <h3>NeuroFlow</h3>
   <hr>
   <ul class="gap-1 nav nav-pills flex-column mb-auto">
     <li class="nav-item">
@@ -16,13 +16,13 @@
 
     </li>
     <li class="nav-item">
-      {% if active_page == "dashboard" %}
-        <a class="nav-link link-body-emphasis active text-light" href="{{ url_for("views.home.home") }}">
-         <img class="px-1" src="{{ url_for('static', filename="svg/light_dashboard.svg") }}"></img>dashboard
+      {% if active_page == "notes" %}
+        <a class="nav-link link-body-emphasis active text-light" href="{{ url_for('views.home.notes') }}">
+         <img class="px-1" src="{{ url_for('static', filename='svg/light_dashboard.svg') }}"></img>notes
         </a>
       {% else %}
-        <a class="nav-link link-body-emphasis" href="{{ url_for("views.home.home") }}">
-          <img class="px-1" src="{{ url_for('static', filename="svg/dashboard.svg") }}"></img>dashboard
+        <a class="nav-link link-body-emphasis" href="{{ url_for('views.home.notes') }}">
+          <img class="px-1" src="{{ url_for('static', filename='svg/dashboard.svg') }}"></img>notes
         </a>
       {% endif %}
     </li>
