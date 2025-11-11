@@ -1,81 +1,57 @@
 services:
-  # Serviço de banco de dados MySQL
   db:
-    image: mysql:8.0.44
-    container_name: vtasks_db
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
     environment:
-      MYSQL_USER: vtasks_user
-      MYSQL_PASSWORD: vtasks_password_dev
-      MYSQL_DATABASE: vtasks_db
-      MYSQL_ROOT_PASSWORD: root_password_change_me
-    volumes:
-      - mysql_data:/var/lib/mysql
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: flask_db
+      MYSQL_USER: flask_user
+      MYSQL_PASSWORD: flask_pass
     ports:
       - "3306:3306"
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u vtasks_user -pvtasks_password_dev"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - vtasks_network
-
-  # Serviço da aplicação Flask
-  web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: vtasks_web
-    environment:
-      FLASK_ENV: development
-      DB_USER: vtasks_user
-      DB_PASSWORD: vtasks_password_dev
-      DB_NAME: vtasks_db
-      SQLALCHEMY_DATABASE_URI: mysql+pymysql://vtasks_user:vtasks_password_dev@db:3306/vtasks_db
-      SECRET_KEY: ${SECRET_KEY:-sua_chave_secreta_muito_forte_aqui}
-      SESSION_PERMANENT: ${SESSION_PERMANENT:-False}
-      SESSION_COOKIE_SAMESITE: ${SESSION_COOKIE_SAMESITE:-Strict}
-      SESSION_COOKIE_HTTPONLY: ${SESSION_COOKIE_HTTPONLY:-True}
     volumes:
-      - .:/app
-      - /app/__pycache__
-    ports:
-      - "5000:5000"
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -proot | grep 'mysqld is alive' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
     depends_on:
       db:
         condition: service_healthy
-    command: >
-      bash -c "
-        ./docker-entrypoint.sh flask run --host=0.0.0.0 --port=5000
-      "
-    networks:
-      - vtasks_network
-    stdin_open: true
-    tty: true
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8080:80"
 
-  # Serviço para executar testes (opcional)
-  tests:
+  flask:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: vtasks_tests
+    container_name: flask_app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
-      FLASK_ENV: testing
-      SQLALCHEMY_DATABASE_URI: "sqlite:///:memory:"
+      FLASK_ENV: production
+      FLASK_APP: wsgi:create_app("production")
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://flask_user:flask_pass@db:3306/flask_db
+      SECRET_KEY: super_secret_key
+    ports:
+      - "5000:5000"
     volumes:
       - .:/app
-      - /app/__pycache__
-    depends_on:
-      - web
-    command: pytest -v --tb=short
-    networks:
-      - vtasks_network
-    profiles:
-      - tests
+    command: flask run --host=0.0.0.0 --port=5000
 
 volumes:
-  mysql_data:
-
-networks:
-  vtasks_network:
-    driver: bridge
+  db_data:

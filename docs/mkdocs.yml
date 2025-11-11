@@ -1,4 +1,4 @@
-site_name: VTasks API Docs
+site_name: neuroflows API Docs
 
 nav:
   - Home: index.md

@@ -9,4 +9,4 @@ import pytest
 #     def test_home_page_content(self, client) -> None:
 #         response = client.get("/")
 #         # TODO: Change this when the home page is implemented
-#         # assert b"Welcome to VTasks!" in response.data
+#         # assert b"Welcome to neuroflows!" in response.data
