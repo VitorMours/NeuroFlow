@@ -7,7 +7,7 @@ api_bp = Blueprint("api", __name__, url_prefix="/api")
 
 
 
-api = Api(api_bp, title='VTasks API', version='1.0', docs="/docs")
+api = Api(api_bp, title='neuroflows API', version='1.0', docs="/docs")
 
 api.add_namespace(user)
 api.add_namespace(todo)

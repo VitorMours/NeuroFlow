@@ -1,36 +1,34 @@
 FROM python:3.12-slim
 
-# Minimal image to run the Flask app using the bundled sqlite DB
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-       build-essential \
-       gcc \
-       libffi-dev \
-       libssl-dev \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    default-mysql-client \
+    gcc \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt /app/requirements.txt
-RUN pip install --upgrade pip setuptools wheel \
-    && pip install --no-cache-dir -r /app/requirements.txt
+COPY requirements.txt .
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt
 
-# Copy application code
-COPY . /app
+COPY . .
 
-# Ensure files are readable
-RUN chmod -R a+rX /app || true
+RUN mkdir -p /app/logs && chmod 755 /app/logs
 
 EXPOSE 5000
 
-# Default environment
-ENV FLASK_ENV=development \
+ENV FLASK_ENV=production \
     FLASK_APP=wsgi.py
 
-# Start the app directly (wsgi.py runs app.run when executed)
-CMD ["python", "wsgi.py"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:5000/health || exit 1
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
 
