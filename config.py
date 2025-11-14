@@ -25,25 +25,34 @@ class Config:
 
 class DevelopmentConfig(Config):
     """Configurações para o ambiente de desenvolvimento."""
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI") or f"sqlite:///db.sqlite3"
+    # Use MySQL em desenvolvimento também
+    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI") or \
+        "mysql+pymysql://vtasks_user:vtasks_password_dev@db:3306/vtasks_db"
 
 
 class TestConfig(Config):
-    """Configurações para o ambiente de teste."""
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_ECHO = False
-    TESTING = True
+    """Configurações para o ambiente de produção."""
+    # By default tests use an in-memory SQLite DB for speed and isolation.
+    # To run tests against MySQL set USE_MYSQL_TESTS=True or provide
+    # SQLALCHEMY_DATABASE_URI in the environment.
+    if os.getenv("USE_MYSQL_TESTS", "False").lower() in ("1", "true", "yes"):
+        SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI") or \
+            "mysql+pymysql://vtasks_user:vtasks_password_dev@db:3306/vtasks_db"
+    else:
+        SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI") or "sqlite:///:memory:"
+
 
 
 class ProductionConfig(Config):
     """Configurações para o ambiente de produção."""
-    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
+    # Force MySQL em produção com fallback explícito
+    SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI") or \
+        "mysql+pymysql://vtasks_user:vtasks_password_dev@db:3306/vtasks_db"
 
 
 config = {
     'development': DevelopmentConfig,
     'testing': TestConfig,
     'production': ProductionConfig,
-    'default': DevelopmentConfig
+    'default': ProductionConfig  # Mude para Production como padrão
 }
