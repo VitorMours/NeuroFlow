@@ -47,3 +47,7 @@ class TestUserService:
             with pytest.raises(AssertionError):
                 assert user_service.exists("testelouco@teste.com")
 
+
+    def test_user_service_have_update_method(self) -> None:
+        module = importlib.import_module("src.services.user_service")
+        

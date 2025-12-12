@@ -7,12 +7,13 @@ from src.repositories.task_repository import TaskRepository
 from src.services.task_service import TaskService
 from ..services.user_service import UserService
 from ..utils.api import single_task_serializer, task_serializer, user_serializer, single_user_serializer
-from .api_models import user_model, user_model_creation, task_model, task_model_creation
+from .api_models import user_model, user_model_creation, user_model, task_model, task_model_creation
 from src.models.user_model import User as Q
 bp = Namespace("user", description="Api resource to access the users data")
 
 user_entity = bp.model("User", user_model)
 user_entity_creation = bp.model("UserCreation", user_model_creation)
+user_entity_updating = bp.model("UserUpdating", user_model)
 task_entity = bp.model("Task", task_model)
 task_entity_creation = bp.model("TaskCreation", task_model_creation)
  
@@ -22,19 +23,20 @@ task_entity_creation = bp.model("TaskCreation", task_model_creation)
 @bp.response(404, "User not found")
 @bp.response(405, "HTTP Method not allowed")
 class UserList(Resource):
-    
+    """Resource to get the data based on the user and the user uuid"""
     @bp.doc("Get all the users data")
     @bp.marshal_list_with(user_entity)
     def get(self):
+        """Get all the users in database"""
         users = UserService.get_all_users()
         return user_serializer(users)
 
     @bp.doc("Create a new user with body data")
     @bp.expect(user_entity_creation)
     def post(self):
+        """Creating user with json in the database"""
         payload = request.json
         user = UserService.create_user(payload)
-        # Se for erro, retorna mensagem e status 400
         if isinstance(user, Exception):
             return {"message": str(user)}, 400
         if not user:
@@ -42,18 +44,17 @@ class UserList(Resource):
         user_serialized = single_user_serializer(user)
         return {"new_user": user_serialized}, 201
 
-@bp.route("/<uuid:user_id>")
-@bp.param("user_id", "The user identifier")
+@bp.route("/<uuid:uuid>")
+@bp.param("uuid", "The user identifier")
 @bp.response(404, "User not found")
 @bp.response(200, "OK")
 @bp.response(204, "No content in the request")
 class User(Resource):
     
     @bp.doc("Get a specific user by the id")
-    def get(self, user_id):
-        """Get user by UUID"""
-        # Converte para string para usar no UserService / DB
-        user_id_str = str(user_id)
+    def get(self, uuid):
+        """Get user by uuid"""
+        user_id_str = str(uuid)
 
         user = UserService.get_user_by_uuid(user_id_str)
         if not user:
@@ -62,8 +63,19 @@ class User(Resource):
         user_serialized = single_user_serializer(user)
         return {"user": user_serialized}, 200
 
-    def put(self, user_id) -> None: 
-        """NAO IMPLEMENTADO"""
+    @bp.doc("Updating a user based on the id of the user")
+    @bp.expect(user_entity_creation)
+    def put(self, uuid) -> None: 
+        """Update the user based on the request body and the uuid"""
+        user_uuid_str = str(uuid)
+        user = UserService.get_user_by_uuid(user_uuid_str)
+        
+        if not user:
+            return {"message":"User not found"}, 404
+        
+        payload = request.json
+        print(payload)
+        
         return {"Returing": "MOdified user"}
     
     

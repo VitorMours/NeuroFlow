@@ -14,7 +14,7 @@ from src.repositories.user_repository import UserRepository
 from src.models.user_model import User
 from wsgi import create_app
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def app():
     faker = Faker()
     
@@ -54,11 +54,11 @@ def app():
         except Exception as e:
             print(f"Aviso no cleanup: {e}")
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def client(app):
     return app.test_client()
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def runner(app):
     return app.test_cli_runner()
 

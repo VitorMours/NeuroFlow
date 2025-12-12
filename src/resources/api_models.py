@@ -1,11 +1,10 @@
 from flask_restx import fields
 
-
 user_model = {
+    "uuid": fields.String,
     "first_name":fields.String,
     "last_name": fields.String, 
     "email": fields.String,
-    "uuid": fields.String
 }
 
 user_model_creation = {

@@ -48,20 +48,33 @@ def create_app(config_name: str) -> Flask:
     with app.app_context():
         try:
             from sqlalchemy import inspect
-
+            
+            # Tenta conectar e inspecionar
             inspector = inspect(db.engine)
             existing_tables = inspector.get_table_names()
+            app.logger.info(f"Existing tables: {existing_tables}")
+            
             required_tables = list(db.metadata.tables.keys())
+            app.logger.info(f"Required tables: {required_tables}")
+            
             missing = [t for t in required_tables if t not in existing_tables]
+            
             if missing:
-                app.logger.info("Missing tables detected: %s. Creating...", missing)
-                db.create_all()
+                app.logger.info(f"Missing tables detected: {missing}. Creating...")
+                try:
+                    db.create_all()
+                    app.logger.info("Missing tables created successfully.")
+                except Exception as create_error:
+                    app.logger.error(f"Failed to create tables: {create_error}")
+                    # Não levante o erro - apenas registre
             else:
                 app.logger.info("All tables already exist. Skipping create_all().")
-        except Exception:
-            # If inspection fails for any reason, fall back to create_all to avoid startup failure.
-            app.logger.exception("Table inspection failed; falling back to db.create_all().")
-            db.create_all()
+                
+        except Exception as e:
+            # Se a inspeção falhar, apenas registre o erro mas NÃO tente criar tabelas
+            app.logger.warning(f"Table inspection failed: {e}")
+            app.logger.info("Assuming tables already exist or will be created via migrations.")
+            # NÃO chame db.create_all() aqui!
     
     admin = Admin()
     admin_add_views(admin, [User, Task, Note])
@@ -90,8 +103,22 @@ def create_app(config_name: str) -> Flask:
     return app
 
 # Force production environment no Docker
-config_name = os.getenv('FLASK_ENV', 'production')
-app = create_app(config_name)
+
+# Expose a module-level `app` for WSGI servers (e.g., Gunicorn).
+# Gunicorn expects a module-level callable like `wsgi:app`.
+# Use FLASK_ENV at import time if present; otherwise default to 'production'.
+try:
+    app = create_app(os.getenv("FLASK_ENV", "production"))
+except Exception:
+    # If creating the app at import time fails, log and re-raise to ensure
+    # the container / process exits with a clear error message.
+    import logging
+    logging.exception("Failed to create application during import")
+    raise
+
 
 if __name__ == "__main__":
+
+    config_name = os.getenv("FLASK_ENV", "development")
+    app = create_app(config_name)
     app.run(host="0.0.0.0", port=5000)

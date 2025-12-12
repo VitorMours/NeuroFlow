@@ -1,13 +1,13 @@
 services:
   db:
-    image: mysql:8.4.7
+    image: mysql:latest
     container_name: mysql_db
     restart: unless-stopped
     environment:
-      MYSQL_USER: vtasks_user
-      MYSQL_PASSWORD: ${DB_PASSWORD:-vtasks_password_dev}
-      MYSQL_DATABASE: vtasks_db
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_change_me}
+      MYSQL_USER: neuroflow_user
+      MYSQL_PASSWORD: neuroflow_password_dev
+      MYSQL_DATABASE: neuroflow_db
+      MYSQL_ROOT_PASSWORD: root_password_change_me
     volumes:
       - db_data:/var/lib/mysql
     ports:
@@ -32,7 +32,7 @@ services:
       PMA_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_change_me}
     ports:
       - "8080:80"
-
+    
   flask:
     build:
       context: .
@@ -43,10 +43,12 @@ services:
       db:
         condition: service_healthy
     environment:
+      FLASK_APP: wsgi:app  # Deve ser wsgi:app (used by flask CLI)
       FLASK_ENV: production
-      SECRET_KEY: ${SECRET_KEY:-super_secret_key}
-      SQLALCHEMY_DATABASE_URI: mysql+pymysql://vtasks_user:${DB_PASSWORD:-vtasks_password_dev}@db:3306/vtasks_db
-      DB_PASSWORD: ${DB_PASSWORD:-vtasks_password_dev}
+      SECRET_KEY: super_secret_key_for_testing
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://neuroflow_user:neuroflow_password_dev@db:3306/neuroflow_db
+    command: gunicorn --bind 0.0.0.0:5000 --workers 1 --threads 2 --access-logfile - wsgi:app
+
     ports:
       - "5000:5000"
 
