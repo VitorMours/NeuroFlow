@@ -6,7 +6,6 @@ def test_app_creation(app):
     print(app.config)
     assert app.config['TESTING'] is True
 
-
 def test_app_config(app):
     assert app.config['SECRET_KEY'] is not None
     assert app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite:///')
