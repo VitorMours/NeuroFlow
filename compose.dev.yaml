@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql:8.4.7
+    container_name: mysql_dev_db
+    restart: unless-stopped
+    environment:
+      MYSQL_USER: vtasks_user
+      MYSQL_PASSWORD: ${DB_PASSWORD:-vtasks_password_dev}
+      MYSQL_DATABASE: vtasks_dev_db
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_change_me}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${DB_ROOT_PASSWORD:-root_password_change_me}"]
+      timeout: 20s
+      retries: 10
+      start_period: 40s
+      interval: 10s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin_dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD:-root_password_change_me}
+    ports:
+      - "8080:80"
+
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: flask_app_dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      FLASK_ENV: production
+      SECRET_KEY: ${SECRET_KEY:-super_secret_key}
+      SQLALCHEMY_DATABASE_URI: mysql+pymysql://vtasks_user:${DB_PASSWORD:-vtasks_password_dev}@db:3306/vtasks_db
+      DB_PASSWORD: ${DB_PASSWORD:-vtasks_password_dev}
+    ports:
+      - "5000:5000"
+
+volumes:
+  db_data:
