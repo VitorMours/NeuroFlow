@@ -12,9 +12,9 @@
 # Motivação
 
 Temos que o neuroflows é um projeto de autoria própria, focado criar uma aplicação web monolítica, usando tecnologias consolidadas e
-que são consideradas fundamentais no mercado, para consolidar meus conhecimentos de desenvolvimento web, tanto front-end como back-end.
+que são consideradas fundamentais no mercado, e usando tecnologias que são emergentes para o desenvolvimento de uma aplicação mobile que funcione lado a lado com nossa aplicação web
 A aplicação foi feita com o intuito de criar ferramentas de uso comum por estudantes tanto de nivel médio como nível superior, de forma 
-que essas ferramentas fiquem centralizadas dentro de um mesmo local.
+que essas ferramentas sejam de fácil acesso, e que o nosso usuário tenha maior facilidade na forma como pode acessar suas informações, e suas anotações
 
 ## Features do Projeto
 Como feature do projeto, algumas funcionalidades existentes que vão ser usadas para facilitar os estudos dos nossos usuários são:

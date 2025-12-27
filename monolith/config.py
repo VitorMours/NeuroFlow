@@ -13,8 +13,7 @@ class Config:
     SESSION_COOKIE_HTTPONLY = os.getenv("SESSION_COOKIE_HTTPONLY") == "True"
     MONGO_URI = os.getenv("MONGO_URI") or "CHANGE-ME"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    FLASK_ADMIN_SWATCH = 'spacelab'
+    #FLASK_ADMIN_SWATCH = 'minty'
     FLASK_ADMIN = 'jvrezendemoura@gmail.com'
 
     @staticmethod

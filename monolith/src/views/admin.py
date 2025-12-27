@@ -1,7 +1,14 @@
-from flask_admin import Admin, BaseView, expose
+from flask_admin import Admin, BaseView, expose, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from src.models import db
 
+
+class AdminView(AdminIndexView):
+    
+    @expose("/")
+    def index(self):
+        return self.render("admin/admin.html")
+    
 class AnalyticsViews(BaseView):
     @expose('/')
     def index(self):

@@ -9,7 +9,7 @@ from flask_migrate import Migrate
 from src.models.user_model import User
 from src.models.task_model import Task
 from src.models.note_model import Note
-from src.views.admin import admin_add_views
+from src.views.admin import AdminView, admin_add_views
 from src.views import bp
 from src.resources import api_bp
 from config import config
@@ -76,7 +76,7 @@ def create_app(config_name: str) -> Flask:
             app.logger.info("Assuming tables already exist or will be created via migrations.")
             # NÃO chame db.create_all() aqui!
     
-    admin = Admin()
+    admin = Admin(index_view=AdminView())
     admin_add_views(admin, [User, Task, Note])
     admin.init_app(app)
     app.register_blueprint(bp)
@@ -102,11 +102,6 @@ def create_app(config_name: str) -> Flask:
 
     return app
 
-# Force production environment no Docker
-
-# Expose a module-level `app` for WSGI servers (e.g., Gunicorn).
-# Gunicorn expects a module-level callable like `wsgi:app`.
-# Use FLASK_ENV at import time if present; otherwise default to 'production'.
 try:
     app = create_app(os.getenv("FLASK_ENV", "production"))
 except Exception:
