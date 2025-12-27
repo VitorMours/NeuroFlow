@@ -29,7 +29,7 @@ class AuthService(AuthServiceInterface):
 
     @staticmethod
     def destroy_session() -> None:
-        return True
+        session.clear()
 
     @staticmethod
     def login_user(user_data: dict) -> bool:

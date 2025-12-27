@@ -14,8 +14,6 @@ user_model_creation = {
     "password": fields.String
 }
 
-
-
 task_model = {
     "uuid":fields.String,
     "task":fields.String,
