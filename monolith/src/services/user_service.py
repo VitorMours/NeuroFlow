@@ -51,8 +51,7 @@ class UserService(UserServiceInterface):
 
     @staticmethod
     def update_user(user, data) -> User:
-        searched_user = UserRepository.get_by_uuid(user)
-        updated_user = UserRepository.update(searched_user, data)
+        updated_user = UserRepository.update(user, data)
         return updated_user
 
     @staticmethod

@@ -13,7 +13,7 @@ bp = Namespace("user", description="Api resource to access the users data")
 
 user_entity = bp.model("User", user_model)
 user_entity_creation = bp.model("UserCreation", user_model_creation)
-user_entity_updating = bp.model("UserUpdating", user_model)
+user_entity_updating = bp.model("UserUpdating", user_model_creation)
 task_entity = bp.model("Task", task_model)
 task_entity_creation = bp.model("TaskCreation", task_model_creation)
  
@@ -69,6 +69,7 @@ class User(Resource):
     def patch(self, uuid):
         payload = request.json
         user = UserService.get_user_by_uuid(str(uuid))
+        
         if isinstance(user, Exception):
             return {"message": str(user)}, 400
         if not user:
