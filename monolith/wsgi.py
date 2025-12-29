@@ -2,6 +2,8 @@ from flask import Flask, render_template, jsonify
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import time
+import logging
 from flask_admin import Admin
 from flask_pagedown import PageDown
 from src.models import db
@@ -14,8 +16,65 @@ from src.views import bp
 from src.resources import api_bp
 from config import config
 
+logger = logging.getLogger(__name__)
+
 dotenv_file = Path(".env")
 load_dotenv(dotenv_path=dotenv_file)
+
+def initialize_database(app, max_retries=10, retry_delay=2):
+    """
+    Tenta conectar ao banco de dados e criar as tabelas que não existem.
+    Faz retry até conseguir ou alcançar o máximo de tentativas.
+    
+    Args:
+        app: A aplicação Flask
+        max_retries: Número máximo de tentativas
+        retry_delay: Delay em segundos entre tentativas
+    """
+    attempt = 0
+    
+    while attempt < max_retries:
+        try:
+            attempt += 1
+            app.logger.info(f"Tentativa {attempt}/{max_retries} de conectar ao banco de dados...")
+            
+            with app.app_context():
+                from sqlalchemy import inspect, text
+                
+                # Testa conexão com o banco
+                db.session.execute(text('SELECT 1'))
+                app.logger.info("✅ Conexão com banco de dados estabelecida!")
+                
+                # Inspeciona tabelas existentes
+                inspector = inspect(db.engine)
+                existing_tables = inspector.get_table_names()
+                app.logger.info(f"📋 Tabelas existentes: {existing_tables}")
+                
+                required_tables = list(db.metadata.tables.keys())
+                app.logger.info(f"📋 Tabelas requeridas: {required_tables}")
+                
+                missing = [t for t in required_tables if t not in existing_tables]
+                
+                if missing:
+                    app.logger.info(f"⚠️  Tabelas faltando: {missing}. Criando...")
+                    db.create_all()
+                    app.logger.info("✅ Tabelas criadas com sucesso!")
+                else:
+                    app.logger.info("✅ Todas as tabelas já existem!")
+                
+                return True
+                
+        except Exception as e:
+            app.logger.warning(f"❌ Tentativa {attempt} falhou: {type(e).__name__}: {str(e)}")
+            
+            if attempt < max_retries:
+                app.logger.info(f"⏳ Aguardando {retry_delay}s antes de tentar novamente...")
+                time.sleep(retry_delay)
+            else:
+                app.logger.error(f"❌ Falha ao conectar após {max_retries} tentativas!")
+                raise RuntimeError(f"Não foi possível inicializar o banco de dados após {max_retries} tentativas: {str(e)}")
+    
+    return False
 
 def create_app(config_name: str) -> Flask:
     app = Flask(__name__, template_folder="src/templates/pages")
@@ -44,37 +103,8 @@ def create_app(config_name: str) -> Flask:
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    # Create only missing tables: if all tables already exist, skip creating.
-    with app.app_context():
-        try:
-            from sqlalchemy import inspect
-            
-            # Tenta conectar e inspecionar
-            inspector = inspect(db.engine)
-            existing_tables = inspector.get_table_names()
-            app.logger.info(f"Existing tables: {existing_tables}")
-            
-            required_tables = list(db.metadata.tables.keys())
-            app.logger.info(f"Required tables: {required_tables}")
-            
-            missing = [t for t in required_tables if t not in existing_tables]
-            
-            if missing:
-                app.logger.info(f"Missing tables detected: {missing}. Creating...")
-                try:
-                    db.create_all()
-                    app.logger.info("Missing tables created successfully.")
-                except Exception as create_error:
-                    app.logger.error(f"Failed to create tables: {create_error}")
-                    # Não levante o erro - apenas registre
-            else:
-                app.logger.info("All tables already exist. Skipping create_all().")
-                
-        except Exception as e:
-            # Se a inspeção falhar, apenas registre o erro mas NÃO tente criar tabelas
-            app.logger.warning(f"Table inspection failed: {e}")
-            app.logger.info("Assuming tables already exist or will be created via migrations.")
-            # NÃO chame db.create_all() aqui!
+    # Inicializa o banco de dados com retry
+    initialize_database(app)
     
     admin = Admin(index_view=AdminView())
     admin_add_views(admin, [User, Task, Note])

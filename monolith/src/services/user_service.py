@@ -50,8 +50,10 @@ class UserService(UserServiceInterface):
         return user
 
     @staticmethod
-    def update_user(user, data) -> None:
-        pass
+    def update_user(user, data) -> User:
+        searched_user = UserRepository.get_by_uuid(user)
+        updated_user = UserRepository.update(searched_user, data)
+        return updated_user
 
     @staticmethod
     def delete_user(data) -> None:

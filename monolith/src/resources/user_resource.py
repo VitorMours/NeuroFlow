@@ -43,7 +43,8 @@ class UserList(Resource):
             return {"message": "Erro ao criar usuário"}, 400
         user_serialized = single_user_serializer(user)
         return {"new_user": user_serialized}, 201
-
+    
+    
 @bp.route("/<uuid:uuid>")
 @bp.param("uuid", "The user identifier")
 @bp.response(404, "User not found")
@@ -63,20 +64,20 @@ class User(Resource):
         user_serialized = single_user_serializer(user)
         return {"user": user_serialized}, 200
 
-    @bp.doc("Updating a user based on the id of the user")
-    @bp.expect(user_entity_creation)
-    def put(self, uuid) -> None: 
-        """Update the user based on the request body and the uuid"""
-        user_uuid_str = str(uuid)
-        user = UserService.get_user_by_uuid(user_uuid_str)
-        
-        if not user:
-            return {"message":"User not found"}, 404
-        
+    @bp.doc("Updating user with new data based on the id")
+    @bp.expect(user_entity_updating)
+    def patch(self, uuid):
         payload = request.json
-        print(payload)
+        user = UserService.get_user_by_uuid(str(uuid))
+        if isinstance(user, Exception):
+            return {"message": str(user)}, 400
+        if not user:
+            return {"message": "This user does not have been registered"}, 404
         
-        return {"Returing": "MOdified user"}
+        new_user = UserService.update_user(user, payload)
+        user_serialized = single_user_serializer(new_user)
+        return {"updated_user": user_serialized}, 200
+
     
     
     
