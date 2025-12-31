@@ -13,8 +13,26 @@
 {% endblock %}
 
 {% block content %}
-{% endblock %}
+<section class="w-full h-screen d-flex flex-column">
+    <article contenteditable="true" class="w-1/2 flex-fill" id="content-note-taker">
+        asdasd
+    </article>
+    
+    <div class="vr mx-3"></div>
 
+    <article class="w-1/2 flex-fill" id="preview-note-taker">
+        asdasd
+        <hr class="my-4"></hr>
+    
+        asdasd
+    </article>
+
+</section>
+{% endblock %}
 {% block scripts %}
+
+    const text = document.getElementById("content");
+    document.getElementById("preview").innerHTML = 
+    marked.parse(`${text.textContent}`);
 
 {% endblock %}
