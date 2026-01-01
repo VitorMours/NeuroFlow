@@ -13,26 +13,46 @@
 {% endblock %}
 
 {% block content %}
-<section class="w-full h-screen d-flex flex-column">
-    <article contenteditable="true" class="w-1/2 flex-fill" id="content-note-taker">
-        asdasd
+<section class="w-100 h-screen d-flex p-3">
+    <article contenteditable="true" class="w-50 overflow-auto" id="content-note-taker">
+        
     </article>
     
     <div class="vr mx-3"></div>
 
-    <article class="w-1/2 flex-fill" id="preview-note-taker">
-        asdasd
+    <article class="flex-fill" id="preview-note-taker">
+        
         <hr class="my-4"></hr>
     
-        asdasd
+        
     </article>
-
 </section>
 {% endblock %}
-{% block scripts %}
 
-    const text = document.getElementById("content");
-    document.getElementById("preview").innerHTML = 
-    marked.parse(`${text.textContent}`);
-
+{% block javascript_pre_bundle %} /
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    // TODO: Ainda precisa corrijir esse javascript
+    const text = document.getElementById("content-note-taker");
+    const preview = document.getElementById("preview-note-taker");
+    
+    // Função para atualizar o preview
+    function updatePreview() {
+        // Usa innerHTML ou innerText dependendo do que você quer
+        const content = text.innerHTML || text.innerText || "";
+        preview.innerHTML = marked.parse(content);
+    }
+    
+    // Atualizar no carregamento inicial
+    updatePreview();
+    
+    // Atualizar quando houver mudanças
+    text.addEventListener('input', updatePreview);
+    text.addEventListener('keyup', updatePreview);
+    text.addEventListener('paste', function(e) {
+        // Espera a colagem ser concluída
+        setTimeout(updatePreview, 10);
+    });
+    text.addEventListener('cut', updatePreview);
+</script>
 {% endblock %}
